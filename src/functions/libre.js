@@ -6,14 +6,14 @@ const authLibreView = async function (username, password, device, setDevice) {
 
   const data = {
     DeviceId: device,
-    GatewayType: "FSLibreLink.iOS",
+    GatewayType: "FSLibreLink.Android",
     SetDevice: setDevice,
     UserName: username,
     Domain: "Libreview",
     Password: password
   };
 
-  const response = await axios.default.post('https://api-eu.libreview.io/lsl/api/nisperson/getauthentication', data, {
+  const response = await axios.default.post('https://api.libreview.ru/lsl/api/nisperson/getauthentication', data, {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -37,16 +37,16 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
 
   const data = {
     UserToken: token,
-    GatewayType: "FSLibreLink.iOS",
+    GatewayType: "FSLibreLink.Android",
     DeviceData: {
       header: {
         device: {
-          hardwareDescriptor: "iPhone14,2",
-          osVersion: "15.4.1",
-          modelName: "com.abbott.librelink.de",
-          osType: "iOS",
+          hardwareDescriptor: "Sony F5321",
+          osVersion: "26",
+          modelName: "com.abbott.librelink.ru",
+          osType: "Android",
           uniqueIdentifier: device,
-          hardwareName: "iPhone"
+          hardwareName: "Android"
         }
       },
       measurementLog: {
@@ -78,7 +78,7 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
     Domain: "Libreview"
   };
 
-  const response = await axios.default.post('https://api-eu.libreview.io/lsl/api/measurements', data, {
+  const response = await axios.default.post('https://api.libreview.ru/lsl/api/measurements', data, {
     headers: {
       'Content-Type': 'application/json'
     }
