@@ -54,6 +54,12 @@ prompt.get([{
   type: 'number',
   default: new Date().getMonth()
 }, {
+  name: 'day',
+  description: 'please enter the DAY you want to transfer to libreview',
+  required: true,
+  type: 'number',
+  default: new Date().getDay()
+}, {
   name: 'libreResetDevice',
   description: 'if you have problems with your transfer, recreate your device id',
   required: true,
@@ -75,8 +81,10 @@ prompt.get([{
   fs.writeFileSync(CONFIG_NAME, JSON.stringify(config));
 
   (async () => {
-    const fromDate = dayjs(`${result.year}-${result.month}-01`).format('YYYY-MM-DD');
-    const toDate = dayjs(`${result.year}-${result.month + 1}-01`).format('YYYY-MM-DD');
+    //const fromDate = dayjs(`${result.year}-${result.month}-01`).format('YYYY-MM-DD');
+    //const toDate = dayjs(`${result.year}-${result.month + 1}-01`).format('YYYY-MM-DD');
+    const fromDate = dayjs(`${result.year}-${result.month}-${result.day}`).format('YYYY-MM-DD');
+    const toDate = dayjs(`${result.year}-${result.month}-${result.day + 1}`).format('YYYY-MM-DD');
 
     console.log('transfer time span', fromDate.gray, toDate.gray);
 
