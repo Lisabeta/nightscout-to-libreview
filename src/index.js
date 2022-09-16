@@ -1,5 +1,5 @@
 //Alex: SSL ignorance from lets encrypt it
-rocess.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const dayjs = require('dayjs');
 const uuid = require('uuid');
 const colors = require('colors');
