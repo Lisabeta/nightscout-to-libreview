@@ -28,7 +28,7 @@ const authLibreView = async function (username, password, device, setDevice) {
   return response.data.result.UserToken;
 }
 
-const transferLibreView = async function (device, token, glucoseEntries, foodEntries, insulinEntries) {
+const transferLibreView = async function (device, token, glucoseEntries, foodEntries, insulinEntries, genericEntries) {
   console.log('transferLibreView'.blue);
 
   console.log('glucose entries', (glucoseEntries || []).length.toString().gray);
@@ -39,14 +39,29 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
     UserToken: token,
     GatewayType: "FSLibreLink.Android",
     DeviceData: {
+//My
+      deviceSettings: {
+        factoryConfig: {
+          UOM: "mmol/L"
+        },
+        firmwareVersion: "2.5.3",
+        miscellaneous: {
+          selectedLanguage: "ru_RU",
+          valueGlucoseTargetRangeLowInMgPerDl: 70,
+          valueGlucoseTargetRangeHighInMgPerDl: 180,
+          selectedTimeFormat: "24hr",
+          selectedCarbType: "grams of carbs"
+        }
+      },
+//endMy
       header: {
         device: {
-          hardwareDescriptor: "Sony F5321",
+          hardwareDescriptor: "F5321",
           osVersion: "26",
-          modelName: "com.abbott.librelink.ru",
+          modelName: "com.freestylelibre.app.ru",
           osType: "Android",
           uniqueIdentifier: device,
-          hardwareName: "Android"
+          hardwareName: "Sony"
         }
       },
       measurementLog: {
@@ -68,7 +83,8 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
           "generic-com.abbottdiabetescare.informatics.alarmSetting"
         ],
         bloodGlucoseEntries: [],
-        genericEntries: [],
+        genericEntries: genericEntries || [],
+        ketoneEntries: [],
         scheduledContinuousGlucoseEntries: glucoseEntries || [],
         insulinEntries: insulinEntries || [],
         foodEntries: foodEntries || [],
@@ -78,6 +94,8 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
     Domain: "Libreview"
   };
 
+  console.log(genericEntries);
+  
   const response = await axios.default.post('https://api.libreview.ru/lsl/api/measurements', data, {
     headers: {
       'Content-Type': 'application/json'
