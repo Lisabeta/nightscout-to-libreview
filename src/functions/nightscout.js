@@ -49,13 +49,14 @@ const getNightscoutFoodEntries = async function (baseUrl, token, fromDate, toDat
     };
   });
 
+  //unites two types of: meal bolus and carb correction
   return [...data1, ...data2].map(e => {
     return {
       extendedProperties: {
         factoryTimestamp: e.timestamp
       },
       recordNumber: e.id,
-      timestamp: e.timestamp,
+      timestamp: dayjs(e.timestamp).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       gramsCarbs: e.carbs,
       foodType: "Unknown"
     };
@@ -72,6 +73,7 @@ const getNightscoutGlucoseEntries = async function (baseUrl, token, fromDate, to
     }
   });
 
+  //attention! every 3d value is taken into account
   const data = response.data.filter(function (value, index, Arr) {
     return index % 3 == 0;
   }).map(d => {
@@ -95,8 +97,10 @@ const getNightscoutGlucoseEntries = async function (baseUrl, token, fromDate, to
         "lowOutOfRange": e.sgv <= 40 ? "true" : "false"
       },
       "recordNumber": e.id,
-      "timestamp": e.dateString,
-      "valueInMgPerDl": e.sgv
+      "timestamp": dayjs(e.dateString).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      //sk > 7 ? (7 + (sk-7) * Math.pow(1-a, b*(sk-7))) : sk
+      //"valueInMgPerDl": e.sgv
+      "valueInMgPerDl": e.sgv > (7*18) ? Math.round( (7 + ((e.sgv/18)-7) * Math.pow(1-0.1, 0.5*((e.sgv/18)-7)))*18 ) : e.sgv
     };
   });
 };
@@ -138,19 +142,123 @@ const getNightscoutInsulinEntries = async function (baseUrl, token, fromDate, to
     };
   });
 
+  //unites two types of boluses
   return [...data1, ...data2].map(e => {
     return {
       extendedProperties: {
         factoryTimestamp: e.timestamp
       },
       recordNumber: e.id,
-      timestamp: e.timestamp,
+      timestamp: dayjs(e.timestamp).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       units: e.insulin,
       insulinType: "RapidActing"
     };
   });
 };
 
+//
+//Notes addition
+const getNightscoutGenericEntries = async function (baseUrl, token, fromDate, toDate) {
+  const url33 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Profile%20Switch&count=131072${getNightscoutToken(token)}`;
+  console.log('profile switch entries url', url33.gray);
+
+  const response33 = await axios.get(url33, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  //const data33 = response33.data.filter(prof => prof.percentage <=185).map(d => {
+  const data33 = response33.data.map(d => {
+    return {
+      type: "com.abbottdiabetescare.informatics.customnote",
+	  id: parseInt(`6${dayjs(d['created_at']).format('YYYYMMDDHHmmss')}`),
+      timestamp: d['created_at'],
+      dateString: d.dateString,
+      profile: d.profile
+    };
+  });
+  //console.log('data33 ===');  console.dir(data33);
+
+  //===
+  //Exercise addition
+  const url44 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Exercise&count=131072${getNightscoutToken(token)}`;
+  console.log('Exercise entries url', url44.gray);
+
+  const response44 = await axios.get(url44, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const data44 = response44.data.map(d => {
+    return {
+      type: "com.abbottdiabetescare.informatics.exercise",
+	  id: parseInt(`6${dayjs(d['created_at']).format('YYYYMMDDHHmmss')}`),
+      timestamp: d['created_at'],
+      dateString: d.dateString,
+      duration: d.duration
+    };
+  });
+  //console.log('data44 ===');   console.dir(data44);
+
+  //===
+  //Transform customnote to upload format
+  tran33 = data33.map(e => {
+    return {
+      //type: "com.abbottdiabetescare.informatics.customnote",
+      //type: "com.abbottdiabetescare.informatics.exercise",
+	  type: e.type,
+      extendedProperties: {
+        factoryTimestamp: e.timestamp,
+        //intensity: "high",
+        //durationInMinutes: e.duration,
+	    text: e.profile
+      },
+      recordNumber: e.id,
+      timestamp: dayjs(e.timestamp).format('YYYY-MM-DDTHH:mm:ss.SSSZ')
+    };
+  });
+  //Transform exercise to upload format
+  tran44 = data44.map(e => {
+    return {
+      //type: "com.abbottdiabetescare.informatics.customnote",
+      //type: "com.abbottdiabetescare.informatics.exercise",
+	  type: e.type,
+      extendedProperties: {
+        factoryTimestamp: e.timestamp,
+        intensity: "high",
+        durationInMinutes: e.duration,
+	    //text: e.profile
+      },
+      recordNumber: e.id,
+      timestamp: dayjs(e.timestamp).format('YYYY-MM-DDTHH:mm:ss.SSSZ')
+    };
+  });
+  //console.log('SUM ==='); console.dir([...tran33, ...tran44]);
+
+  return [...tran33, ...tran44];
+  /*return data33.map(e => {
+    return {
+      //type: "com.abbottdiabetescare.informatics.customnote",
+      //type: "com.abbottdiabetescare.informatics.exercise",
+	  type: e.type,
+      extendedProperties: {
+        factoryTimestamp: e.timestamp,
+        //intensity: "high",
+        //durationInMinutes: e.duration,
+	    text: e.profile
+      },
+      recordNumber: e.id,
+      timestamp: e.timestamp.replace('Z','+03:00')
+    };
+  });
+  */
+  
+};
+
+
 exports.getNightscoutFoodEntries = getNightscoutFoodEntries;
 exports.getNightscoutGlucoseEntries = getNightscoutGlucoseEntries;
 exports.getNightscoutInsulinEntries = getNightscoutInsulinEntries;
+exports.getNightscoutGenericEntries = getNightscoutGenericEntries;
