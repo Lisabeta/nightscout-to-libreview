@@ -24,17 +24,36 @@ console.log('year: ', argv.year);
 console.log('month: ', argv.month);
 console.log('day: ', argv.day);
 
-if (between(argv.year,2015,2999) && between(argv.month,1,12) && between(argv.day,1,31)) {
-  year = argv.year;
-  month = argv.month;
-  day = argv.day;
+//if defined deltaday - use it
+if ( typeof argv.deltaday !== 'undefined' && argv.deltaday != null ) {
+	console.log('deltaday: ', argv.deltaday);
+	console.log('deltaday is defined, ignoring year/month/day args if any.');
+	
+	var deltaday = argv.deltaday;
+	var d = new Date();
+    d.setDate(d.getDate() + deltaday);
+	console.log('Today is: ' + d.toLocaleString());
+	
+    year = d.getFullYear();
+    month = d.getMonth() + 1; //month starts from 0
+    day = d.getDate();	
+	//console.log(`${year}-${month}-${day}`);
+	
 } else {
-  return onErr('year_month_day are NOT between correct values');
+	//if defined year/month/day
+	if (between(argv.year,2015,2999) && between(argv.month,1,12) && between(argv.day,1,31)) {
+	  year = argv.year;
+	  month = argv.month;
+	  day = argv.day;
+	} else {
+	  return onErr('year_month_day are NOT between correct values');
+	}
 }
 console.log('year: ', year);
 console.log('month: ', month);
 console.log('day: ', day);
 
+return onErr('DEBUG STOP');
 
 if (!fs.existsSync(CONFIG_NAME)) {
   fs.writeFileSync(CONFIG_NAME, JSON.stringify(DEFAULT_CONFIG));
