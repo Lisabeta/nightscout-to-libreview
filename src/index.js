@@ -53,7 +53,7 @@ console.log('year: ', year);
 console.log('month: ', month);
 console.log('day: ', day);
 
-return onErr('DEBUG STOP');
+//return onErr('DEBUG STOP');
 
 if (!fs.existsSync(CONFIG_NAME)) {
   fs.writeFileSync(CONFIG_NAME, JSON.stringify(DEFAULT_CONFIG));
