@@ -24,14 +24,6 @@ or specify delta:
 node . --deltaday=-1
 ```
 
-## Future use
-
-Open command line in your favorite folder:
-```
-cd nightscout-to-libreview
-npm start
-```
-
 ## Diff from main branch:
 - commented out interactive part
 - added notes transfer to libreview
