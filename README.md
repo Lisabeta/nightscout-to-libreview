@@ -26,9 +26,9 @@ node . --deltaday=-1
 ```
 
 ## Diff from main branch:
-- commented out interactive part
-- added notes transfer to libreview
-- added exercise notes to libreview
+- commented out interactive part, only config.json required
+- added Profile Switch events as Notes transfer to libreview
+- added Exercise records transfer to libreview
 - added hardwareDescriptor,osVersion,hardwareName as config params
 
 ## Todo
