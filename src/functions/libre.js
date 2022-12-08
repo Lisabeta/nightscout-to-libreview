@@ -28,7 +28,7 @@ const authLibreView = async function (username, password, device, setDevice) {
   return response.data.result.UserToken;
 }
 
-const transferLibreView = async function (device, token, glucoseEntries, foodEntries, insulinEntries, genericEntries) {
+const transferLibreView = async function (device, hardwareDescriptor0, osVersion0, hardwareName0, token, glucoseEntries, foodEntries, insulinEntries, genericEntries) {
   console.log('transferLibreView'.blue);
 
   console.log('glucose entries', (glucoseEntries || []).length.toString().gray);
@@ -56,12 +56,12 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
 //endMy
       header: {
         device: {
-          hardwareDescriptor: "F5321",
-          osVersion: "26",
+          hardwareDescriptor: hardwareDescriptor0,
+          osVersion: osVersion0,
           modelName: "com.freestylelibre.app.ru",
           osType: "Android",
           uniqueIdentifier: device,
-          hardwareName: "Sony"
+          hardwareName: hardwareName0
         }
       },
       measurementLog: {
