@@ -155,7 +155,7 @@ prompt.get([{
         return;
       }
      //console.log(glucoseEntries);
-     await libre.transferLibreView(config.libreDevice, auth, glucoseEntries, foodEntries, insulinEntries, genericEntries);
+     await libre.transferLibreView(config.libreDevice, config.hardwareDescriptor, config.osVersion, config.hardwareName, auth, glucoseEntries, foodEntries, insulinEntries, genericEntries);
     }
 
   })();
