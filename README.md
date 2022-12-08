@@ -14,8 +14,9 @@ git clone https://github.com/AlexZamDia/nightscout-to-libreview
 cd nightscout-to-libreview
 npm install
 
-create config.json file with configuration
-change libreview endpoint api URL to your region
+copy config-example.txt as config.json
+fill file with your personal data (username, password, phone details and libreview sn)
+change libreview endpoint api URL to your region at libre.js
 
 start:
 specify date:
@@ -28,6 +29,7 @@ node . --deltaday=-1
 - commented out interactive part
 - added notes transfer to libreview
 - added exercise notes to libreview
+- added hardwareDescriptor,osVersion,hardwareName as config params
 
 ## Todo
 - many many testing!
