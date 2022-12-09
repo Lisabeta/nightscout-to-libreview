@@ -32,6 +32,7 @@ node . --deltaday=-1
 - added hardwareDescriptor,osVersion,hardwareName as config params
 
 ## Todo
+- Change 1/3 data point transfer to rouding. Sometimes we get less that 96 datapoints.
 - many many testing!
 - better error handling
 - clean up entry point
