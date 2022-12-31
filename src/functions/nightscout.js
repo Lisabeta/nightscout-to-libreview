@@ -100,8 +100,8 @@ const getNightscoutGlucoseEntries = async function (baseUrl, token, fromDate, to
       "timestamp": dayjs(e.dateString).format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       //sk > 7 ? (7 + (sk-7) * Math.pow(1-a, b*(sk-7))) : sk
 
-      //"valueInMgPerDl": e.sgv
-      "valueInMgPerDl": e.sgv > (7*18) ? Math.round( (7 + ((e.sgv/18)-7) * Math.pow(1-0.1, 0.5*((e.sgv/18)-7)))*18 ) : e.sgv
+      "valueInMgPerDl": e.sgv
+      //"valueInMgPerDl": e.sgv > (7*18) ? Math.round( (7 + ((e.sgv/18)-7) * Math.pow(1-0.1, 0.5*((e.sgv/18)-7)))*18 ) : e.sgv
 	  // WARNING!!! This is my personal data calibration workaround DO NOT USE. Uncomment first line and comment second line
 
     };
