@@ -10,8 +10,9 @@ const getNightscoutToken = function (token) {
   return '';
 };
 
+//2023-01-19: added filter &find[carbs][$gt]=0
 const getNightscoutFoodEntries = async function (baseUrl, token, fromDate, toDate) {
-  const url1 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Meal%20Bolus&count=131072${getNightscoutToken(token)}`;
+  const url1 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Meal%20Bolus&find[carbs][$gt]=0&count=131072${getNightscoutToken(token)}`;
   console.log('entries url', url1.gray);
 
   const response1 = await axios.get(url1, {
@@ -30,7 +31,7 @@ const getNightscoutFoodEntries = async function (baseUrl, token, fromDate, toDat
     };
   });
 
-  const url2 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Carb%20Correction&count=131072${getNightscoutToken(token)}`;
+  const url2 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Carb%20Correction&find[carbs][$gt]=0&count=131072${getNightscoutToken(token)}`;
   console.log('entries url', url2.gray);
 
   const response2 = await axios.get(url2, {
@@ -108,8 +109,9 @@ const getNightscoutGlucoseEntries = async function (baseUrl, token, fromDate, to
   });
 };
 
+//2023-01-19: added filter &find[insulin][$gt]=0
 const getNightscoutInsulinEntries = async function (baseUrl, token, fromDate, toDate) {
-  const url1 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Correction%20Bolus&count=131072${getNightscoutToken(token)}`;
+  const url1 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Correction%20Bolus&find[insulin][$gt]=0&count=131072${getNightscoutToken(token)}`;
   console.log('insulin entries url', url1.gray);
 
   const response1 = await axios.get(url1, {
@@ -127,7 +129,8 @@ const getNightscoutInsulinEntries = async function (baseUrl, token, fromDate, to
     };
   });
 
-  const url2 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Bolus&count=131072${getNightscoutToken(token)}`;
+  //2023.01.19: Changed Bolus to Meal Bolus due to AAPSv3.1 updated upload event id.
+  const url2 = `${baseUrl}/api/v1/treatments.json?find[created_at][$gte]=${fromDate}&find[created_at][$lte]=${toDate}&find[eventType]=Meal%20Bolus&find[insulin][$gt]=0&count=131072${getNightscoutToken(token)}`;
   console.log('insulin entries url', url2.gray);
 
   const response2 = await axios.get(url2, {
