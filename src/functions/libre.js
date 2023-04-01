@@ -3,7 +3,8 @@ const colors = require('colors');
 
 const authLibreView = async function (username, password, device, setDevice) {
   console.log('authLibreView'.blue);
-
+console.log('username', username.gray);
+console.log('password', username.gray);
   const data = {
     DeviceId: device,
     GatewayType: "FSLibreLink.Android",
