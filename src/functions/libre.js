@@ -44,7 +44,7 @@ const transferLibreView = async function (device, hardwareDescriptor0, osVersion
         factoryConfig: {
           UOM: "mmol/L"
         },
-        firmwareVersion: "2.5.3",
+        firmwareVersion: "2.8.2",
         miscellaneous: {
           selectedLanguage: "ru_RU",
           valueGlucoseTargetRangeLowInMgPerDl: 70,

@@ -22,10 +22,11 @@ start:
 specify date:
 node . --year=2022 --month=10 --day=01
 or specify delta:
-node . --deltaday=-1
+node . --deltaday=7
 ```
 
 ## Diff from main branch:
+- delta days may contain any number of date backward from today to upload
 - commented out interactive part, only config.json required
 - added Profile Switch events as Notes transfer to libreview
 - added Exercise records transfer to libreview

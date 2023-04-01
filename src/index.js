@@ -31,13 +31,21 @@ if ( typeof argv.deltaday !== 'undefined' && argv.deltaday != null ) {
 	
 	var deltaday = argv.deltaday;
 	var d = new Date();
-    d.setDate(d.getDate() + deltaday);
-	console.log('Today is: ' + d.toLocaleString());
+    d.setDate(d.getDate() - deltaday);
 	
-    year = d.getFullYear();
-    month = d.getMonth() + 1; //month starts from 0
-    day = d.getDate();	
-	//console.log(`${year}-${month}-${day}`);
+	
+    fromyear = d.getFullYear();
+    frommonth = d.getMonth() + 1; //month starts from 0
+    fromday = d.getDate();	
+	
+	var tod = new Date();
+	toyear = tod.getFullYear();
+    tomonth = tod.getMonth() + 1; //month starts from 0
+    today = tod.getDate();	
+	
+	var fromDate = dayjs(`${fromyear}-${frommonth}-${fromday}`).format('YYYY-MM-DD');
+	var toDate = dayjs(`${toyear}-${tomonth}-${today}`).format('YYYY-MM-DD');
+	//console.log("Upload datad from " + fromDate +  " to " + toDate);
 	
 } else {
 	//if defined year/month/day
@@ -45,13 +53,16 @@ if ( typeof argv.deltaday !== 'undefined' && argv.deltaday != null ) {
 	  year = argv.year;
 	  month = argv.month;
 	  day = argv.day;
+	  
+	  var fromDate = dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DD');
+	  var toDate = dayjs(`${year}-${month}-${day + 1}`).format('YYYY-MM-DD');
+	
 	} else {
 	  return onErr('year_month_day are NOT between correct values');
 	}
 }
-console.log('year: ', year);
-console.log('month: ', month);
-console.log('day: ', day);
+
+console.log("Upload data from " + fromDate +  " to " + toDate);
 
 //return onErr('DEBUG STOP');
 
@@ -134,8 +145,8 @@ prompt.get([{
     //const toDate = dayjs(`${result.year}-${result.month + 1}-01`).format('YYYY-MM-DD');
     //const fromDate = dayjs(`${result.year}-${result.month}-${result.day}`).format('YYYY-MM-DD');
     //const toDate = dayjs(`${result.year}-${result.month}-${result.day + 1}`).format('YYYY-MM-DD');
-    const fromDate = dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DD');
-    const toDate = dayjs(`${year}-${month}-${day + 1}`).format('YYYY-MM-DD');
+    //const fromDate = dayjs(`${year}-${month}-${day}`).format('YYYY-MM-DD');
+    //const toDate = dayjs(`${year}-${month}-${day + 1}`).format('YYYY-MM-DD');
 
     console.log('transfer time span', fromDate.gray, toDate.gray);
 
