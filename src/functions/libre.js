@@ -1,8 +1,57 @@
+const crypto = require('crypto');
 const axios = require('axios');
+const dayjs = require('dayjs');
 const colors = require('colors');
+
+const randomInt = function (min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+};
+
+const selectData = function (entries) {
+  // Group dates by day
+  const groups = entries.reduce((acc, singleEntry) => {
+    const day = dayjs(singleEntry.timestamp).date();
+
+    if (!acc[day]) {
+      acc[day] = [];
+    }
+
+    acc[day].push(singleEntry);
+
+    return acc;
+  }, {});
+
+  const result = [];
+
+  for (const day of Object.values(groups)) {
+    const dayEntries = day.filter(singleEntry => {
+      const hour = dayjs(singleEntry.timestamp).hour();
+
+      return hour >= 7 && hour < 21;
+    });
+
+    const selectionSize = randomInt(8, 10);
+
+    if (dayEntries.length < selectionSize) {
+      result.push(...dayEntries);
+    } else {
+      // Select 8 dates evenly distributed over the 7am-9pm range
+      const slots = Array.from({ length: selectionSize }, (_, i) => i);
+      const slotSize = Math.floor(dayEntries.length / selectionSize);
+      const slotPositions = slots.map(slot => slot * slotSize);
+      for (const pos of slotPositions) {
+        const slotDates = dayEntries.slice(pos, pos + slotSize);
+        result.push(slotDates[Math.floor(Math.random() * slotDates.length)]);
+      }
+    }
+  }
+
+  return result;
+};
 
 const authLibreView = async function (username, password, device, setDevice) {
   console.log('authLibreView'.blue);
+
   const data = {
     DeviceId: device,
     GatewayType: "FSLibreLink.iOS",
@@ -11,8 +60,6 @@ const authLibreView = async function (username, password, device, setDevice) {
     Domain: "Libreview",
     Password: password
   };
- 
-console.log('data', data);
 
   const response = await axios.default.post('https://api.libreview.ru/lsl/api/nisperson/getauthentication', data, {
     headers: {
@@ -29,40 +76,27 @@ console.log('data', data);
   return response.data.result.UserToken;
 }
 
-const transferLibreView = async function (device, hardwareDescriptor0, osVersion0, hardwareName0, token, glucoseEntries, foodEntries, insulinEntries, genericEntries) {
+const transferLibreView = async function (device, token, glucoseEntries, foodEntries, insulinEntries) {
   console.log('transferLibreView'.blue);
 
   console.log('glucose entries', (glucoseEntries || []).length.toString().gray);
   console.log('food entries', (foodEntries || []).length.toString().gray);
   console.log('insulin entries', (insulinEntries || []).length.toString().gray);
 
+  const glucoseSelection = selectData(glucoseEntries);
+
   const data = {
     UserToken: token,
-    GatewayType: "FSLibreLink.Android",
+    GatewayType: "FSLibreLink.Android", //iOS
     DeviceData: {
-//My
-      deviceSettings: {
-        factoryConfig: {
-          UOM: "mmol/L"
-        },
-        firmwareVersion: "2.8.2",
-        miscellaneous: {
-          selectedLanguage: "ru_RU",
-          valueGlucoseTargetRangeLowInMgPerDl: 70,
-          valueGlucoseTargetRangeHighInMgPerDl: 180,
-          selectedTimeFormat: "24hr",
-          selectedCarbType: "grams of carbs"
-        }
-      },
-//endMy
       header: {
         device: {
-          hardwareDescriptor: hardwareDescriptor0,
-          osVersion: osVersion0,
+          hardwareDescriptor: "Sony XQ-AS52", //"iPhone14,2", 
+          osVersion: "30",
           modelName: "com.freestylelibre.app.ru",
-          osType: "Android",
+          osType: "Android"; //"iOS",
           uniqueIdentifier: device,
-          hardwareName: hardwareName0
+          hardwareName: "Sony"
         }
       },
       measurementLog: {
@@ -84,19 +118,16 @@ const transferLibreView = async function (device, hardwareDescriptor0, osVersion
           "generic-com.abbottdiabetescare.informatics.alarmSetting"
         ],
         bloodGlucoseEntries: [],
-        genericEntries: genericEntries || [],
-        ketoneEntries: [],
+        genericEntries: [],
         scheduledContinuousGlucoseEntries: glucoseEntries || [],
         insulinEntries: insulinEntries || [],
         foodEntries: foodEntries || [],
-        unscheduledContinuousGlucoseEntries: []
+        unscheduledContinuousGlucoseEntries: glucoseSelection || []
       }
     },
     Domain: "Libreview"
   };
 
-  console.log(genericEntries);
-  
   const response = await axios.default.post('https://api.libreview.ru/lsl/api/measurements', data, {
     headers: {
       'Content-Type': 'application/json'
