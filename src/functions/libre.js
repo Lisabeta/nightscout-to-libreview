@@ -3,16 +3,16 @@ const colors = require('colors');
 
 const authLibreView = async function (username, password, device, setDevice) {
   console.log('authLibreView'.blue);
-console.log('username', username.gray);
-console.log('password', password.gray);
   const data = {
     DeviceId: device,
-    GatewayType: "FSLibreLink.Android",
+    GatewayType: "FSLibreLink.iOS",
     SetDevice: setDevice,
     UserName: username,
     Domain: "Libreview",
     Password: password
   };
+ 
+console.log('data', data);
 
   const response = await axios.default.post('https://api.libreview.ru/lsl/api/nisperson/getauthentication', data, {
     headers: {
