@@ -60,13 +60,16 @@ const authLibreView = async function (username, password, device, setDevice) {
     Domain: "Libreview",
     Password: password
   };
-
-  const response = await axios.default.post('https://api.libreview.ru/lsl/api/nisperson/getauthentication', data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
+	
+	try{
+	  const response = await axios.default.post('https://api.libreview.ru/lsl/api/nisperson/getauthentication', data, {
+		headers: {
+		  'Content-Type': 'application/json'
+		}
+	  });
+	} catch (error){
+		console.log('authLibreView, error:', error.red);
+	}
   console.log('authLibreView, response', response.data.gray);
 
   if (response.data.status !== 0) {
@@ -127,13 +130,16 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
     },
     Domain: "Libreview"
   };
-
-  const response = await axios.default.post('https://api.libreview.ru/lsl/api/measurements', data, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
+	try{
+	  const response = await axios.default.post('https://api.libreview.ru/lsl/api/measurements', data, {
+		headers: {
+		  'Content-Type': 'application/json'
+		}
+	  });
+	} catch (error){
+		console.log('transferLibreView, response, error!', error.gray);
+	}
+	
   console.log('transferLibreView, response', response.data.gray);
 };
 

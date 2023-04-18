@@ -50,10 +50,9 @@ console.log("Upload datad from " + fromDate +  " to " + toDate);
       const auth = await libre.authLibreView(config.libreUsername, config.librePassword, config.libreDevice, result.libreResetDevice);
       if (!!!auth) {
         console.log('libre auth failed!'.red);
-
         return;
       }
-
+		
       await libre.transferLibreView(config.libreDevice, auth, glucoseEntries, foodEntries, insulinEntries);
     }
   })();
