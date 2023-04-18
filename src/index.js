@@ -57,7 +57,7 @@ console.log("Upload datad from " + fromDate +  " to " + toDate);
       await libre.transferLibreView(config.libreDevice, auth, glucoseEntries, foodEntries, insulinEntries);
     }
   })();
-});
+
 
 function onErr(err) {
   console.log(err);
