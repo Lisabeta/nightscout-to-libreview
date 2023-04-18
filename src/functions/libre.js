@@ -94,7 +94,7 @@ const transferLibreView = async function (device, token, glucoseEntries, foodEnt
           hardwareDescriptor: "Sony XQ-AS52", //"iPhone14,2", 
           osVersion: "30",
           modelName: "com.freestylelibre.app.ru",
-          osType: "Android"; //"iOS",
+          osType: "Android", //"iOS",
           uniqueIdentifier: device,
           hardwareName: "Sony"
         }
